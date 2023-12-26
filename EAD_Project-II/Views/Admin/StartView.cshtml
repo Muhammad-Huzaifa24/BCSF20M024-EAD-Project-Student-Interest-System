@@ -1,0 +1,136 @@
+﻿@{
+    Layout = null; // This view won't use a layout for simplicity
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Student Interest System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .card {
+            width: 600px;
+            padding: 20px;
+            /* border: 1px solid #000924; */
+            border-radius: 8px;
+            background-color: #CCCCFF;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .welcome-text {
+            text-align: center;
+            margin-bottom: 20px;
+            /* border:1px solid black; */
+            padding:7px;
+            border-radius:5px;
+            background-color: #000924;
+            color:white;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .row {
+           /*  border:1px solid black; */
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .pic {
+            /* border:1px solid black; */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 50px;
+        }
+
+            .pic img {
+                margin-bottom: 10px;
+            }
+
+          .user-button{
+                background-color:white;
+                border: 1px solid #000924;
+          }
+       
+
+          button {
+                margin: 10px;
+                padding: 10px 20px;
+                font-size: 16px;
+                border-radius: 5px;
+                border: none;
+                cursor: pointer;
+                width:170px;
+                height:50px;
+                font-weight:bold;
+          }
+
+        .row button:nth-child(1) {
+            /* Styles for the first button */
+            /* For example */
+            background-color: #000924;
+            color: white;
+        }
+
+        .row button:nth-child(1):hover {
+                color: #000924;
+                border: 1px solid #000924;
+                background-color:white;
+                transition: background-color 0.5s;
+        }
+        .row button:nth-child(2) {
+            /* Styles for the first button */
+            /* For example */
+            color: #000924;
+            border:1px solid #000924;
+            
+        }
+
+        .row button:nth-child(2):hover{
+                background-color: #000924;
+                color: white;
+                transition: background-color 0.5s;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1 class="welcome-text">Welcome to Student Interest System</h1>
+        <br /><br />
+        <br /><br />
+        <div class="container">
+            <div class="row">
+                <div class="pic">
+                    <img src="~/images/user.png" alt="User" width="170" height="170" />
+                </div>
+                <div class="pic">
+                    <img src="~/images/admin.png" alt="Admin" width="170" height="170" />
+                </div>
+            </div>
+
+            <div class="row">            
+                 <button onclick="location.href='@Url.Action("SignUp", "SignUp")'">User</button>                      
+                 <button onclick="location.href='@Url.Action("Admin", "Admin")'">Admin</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,208 @@
+﻿@model EAD_Project_II.StudentViewModel
+
+@{
+    Layout = "~/Views/Shared/AddStudent_layout.cshtml";
+    ViewBag.Title = "Edit";
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <script>
+        alert('@TempData["SuccessMessage"]');
+
+
+    </script>
+}
+
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            event.preventDefault();
+
+            var formData = $(this).serialize();
+
+            $.ajax({
+                url: '@Url.Action("EditStudent", "StudentList")',
+                type: 'POST',
+                data: formData,
+                success: function (data) {
+                    // Update the table row with the edited data here
+                    // Example assuming you have a table row ID attribute as 'data-id'
+                    var rowToUpdate = $('tr[data-id="' + data.Id + '"]');
+                    if (rowToUpdate.length > 0) {
+                        rowToUpdate.find('td:nth-child(2)').text(data.FullName);
+                        rowToUpdate.find('td:nth-child(3)').text(data.RollNumber);
+                        // Update other columns similarly
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                }
+            });
+        });
+    });
+</script>
+
+
+<!-- Include Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container mt-4">
+    <div class="card-header text-center custom-card-color">
+        <!-- Center align the card header -->
+        <h2 class="card-title mb-0 custom-color">Edit Student</h2>
+    </div>
+    <br />
+    <div class="card-body">
+        <form asp-controller="StudentList" asp-action="EditStudent" method="post" class="needs-validation" novalidate>
+            <div class="form-row">
+                <input type="hidden" asp-for="Id" />
+                <div class="col-md-4 mb-3">
+                    <label asp-for="FullName">Full Name</label>
+                    <input asp-for="FullName" class="form-control" , placeholder="Full Name" required value="@Model.FullName">
+                    <span asp-validation-for="FullName" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="RollNumber">Roll Number</label>
+                    <input asp-for="RollNumber" class="form-control" , placeholder="Roll number" value="@Model.RollNumber">
+                    <span asp-validation-for="RollNumber" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="EmailAddress">Email Address</label>
+                    <input asp-for="EmailAddress" class="form-control" , placeholder="Email Address" value="@Model.EmailAddress">
+                    <span asp-validation-for="EmailAddress" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Gender">Gender</label>
+                    <select asp-for="Gender" class="form-control" required value="@Model.Gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Dob">Date of Birth</label>
+                    <input asp-for="Dob" type="date" class="form-control" value="@Model.Dob?.ToString("yyyy-MM-dd")">
+                    <span asp-validation-for="Dob" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="City">City</label>
+                    <input asp-for="City" class="form-control" , placeholder="Your City" value="@Model.City">
+                    <span asp-validation-for="City" class="text-danger"></span>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <label asp-for="Interest">Interest</label>
+                    <textarea asp-for="Interest" class="form-control" rows="1" , placeholder="Describe interest" value="@Model.Interest"></textarea>
+                    <span asp-validation-for="Interest" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Dept">Department</label>
+                    <select asp-for="Dept" , class="form-control" required value="@Model.Dept">
+                        <option value="">Select an option</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Software Engeenering">Software Engeenering</option>
+                        <option value="Data Science">Data Science</option>
+                    </select>
+                    <span asp-validation-for="Dept" class="text-danger"></span>
+
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Degree">Degree</label>
+                    <select asp-for="Degree" , class="form-control" required value="@Model.Degree">
+                        <option value="">Select an option</option>
+                        <option value="Assosiate Degree">Assosiate Degree</option>
+                        <option value="Bachelors Degree">Bachelors Degree</option>
+                        <option value="M.Phil Degree">M.Phil Degree</option>
+                        <option value="Post-Graduate Diploma">Post-Graduate Diploma</option>
+                        <option value="Doctorate">Doctorate</option>
+                        <option value="Post-Doctorate">Post-Doctorate</option>
+                    </select>
+                    <span asp-validation-for="Degree" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Subject">Subject</label>
+                    <input asp-for="Subject" class="form-control" , placeholder="make a subject" value="@Model.Subject">
+                    <span asp-validation-for="Subject" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StartDate">Start Date</label>
+                    <input asp-for="StartDate" type="date" class="form-control" value="@((Model.StartDate.HasValue ? Model.StartDate.Value.ToString("yyyy-MM-dd") : ""))">
+                    <span asp-validation-for="StartDate" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="EndDate">End Date</label>
+                    <input asp-for="EndDate" type="date" class="form-control" value="@((Model.EndDate.HasValue ? Model.EndDate.Value.ToString("yyyy-MM-dd") : ""))">
+                    <span asp-validation-for="EndDate" class="text-danger"></span>
+                </div>
+            </div>
+
+
+            <!-- Add more form rows for other fields -->
+            <button type="submit" class="btn custom-btn-primary float-left">Update</button>
+            <button type="button" class="btn custom-btn-dark float-left ml-2" onclick="window.history.back();">Cancel</button>
+            <br />
+        </form>
+    </div>
+</div>
+
+<style>
+
+    input, select, textarea {
+        border: 1px solid #000033 !important;
+    }
+
+    .custom-btn-dark {
+        width: 10%;
+        color: white;
+        background-color: black;
+    }
+
+        .custom-btn-dark:hover {
+            color: black;
+            background-color: white;
+            border: 1px solid black;
+        }
+
+    .custom-btn-primary {
+        width: 10%;
+        background-color: #00008B; /* Replace 'blue' with your desired color */
+        color: white; /* Text color */
+    }
+
+        .custom-btn-primary:hover {
+            color: #00008B;
+            background-color: white;
+            border: 1px solid #00008B;
+        }
+
+    .custom-color {
+        background-color: #00008B; /* Change to your preferred purple shade */
+        color: white; /* Change text color for better visibility */
+        padding: 10px; /* Add padding for better aesthetics */
+        border-radius: 5px; /* Add border radius for a rounded look */
+    }
+
+    .custom-card-color {
+        background-color: #F5F5FF;
+    }
+</style>
+
+
+<!-- Bootstrap JS (Popper.js and Bootstrap JS) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.5.4/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+

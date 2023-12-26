@@ -1,0 +1,104 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model EAD_Project_II.Models.LoginViewModel
+@{
+    Layout = "~/Views/Shared/layout_1.cshtml";
+    ViewBag.Title = "Login";
+}
+
+
+@* <div style="background-color: #162e56; color: white; padding: 20px;">
+
+    <h3 class="text-center">Student Interest System</h3>
+</div>
+<br />
+<br /> *@
+
+<br />
+<br />
+<br />
+
+<style>
+    .smaller-input {
+        width: 100%; /* Adjust width as needed */
+        max-width: 350px; /* Set a maximum width if required */
+        margin-bottom: 25px; /* Add margin to separate elements */
+        margin-left:7px;
+        background-color: #000924;
+        color:green;
+
+    }
+
+    .custom-button-width {
+        width: 100%; /* Adjust the width as needed */
+        max-width: 350px; /* Set a maximum width if required */
+        margin-top: 30px; /* Add margin to separate the button */
+        margin-bottom: 10px;
+        background-color: #bfcfff;
+        border :1px solid white;
+       color:black;
+        border-radius: 20px;
+        padding: 7px;
+    }
+
+    .card {
+        border-radius: 10px; /* Adjust the radius as needed */
+    }
+    .form-group {
+        text-align: center;
+    }
+
+    .d-inline-block {
+        display: inline-block;
+        vertical-align: top;
+    }
+
+    body {
+        background-color: #bfcfff;
+    }
+
+    .white-text {
+        color: white;
+    }
+</style>
+
+<div class="card mx-auto" style="max-width: 400px; background-color: #000924;">
+    <div class="card-body">
+        <h2 style="text-align:center; color:white;">Login</h2>
+        <br />
+        @using (Html.BeginForm("Login", "Login", FormMethod.Post, new { @class = "text-center" }))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                @Html.TextBoxFor(model => model.Name, new { @class = "form-control smaller-input", placeholder = "Name" })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control smaller-input", placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control smaller-input", placeholder = "Password" })
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+
+            <div class="form-group">
+                @Html.CheckBox("rememberMe", false, new { @class = "form-check-input" })
+                @Html.Label("Remember Me", "Remember Me", new { @class = "form-check-label white-text" })
+            </div>
+
+            <button type="submit" class="btn btn-primary custom-button-width">Login</button>
+            <p style="text-align:center; color:white;"> Don't Have an account? <a href="@Url.Action("SignUp", "SignUp")">SignUp</a></p>
+            <p style="text-align:center; color:white;">
+                <a href="@Url.Action("StartView", "Admin")" style="text-decoration: none; color: white;">Goto Start</a>
+            </p>
+        }
+    </div>
+</div>
+
+
+

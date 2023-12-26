@@ -1,0 +1,515 @@
+﻿@{
+    Layout = "~/Views/Shared/dashboard_layout.cshtml";
+    ViewBag.Title = "Dashboard";
+}
+<style>
+
+    /*For students status and counts*/
+
+    table 
+    {
+        width: 100%; /* Adjust the width as needed */
+        margin: 2px auto;
+        border-collapse: collapse;
+        height:350px;
+    }
+    
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+       
+        
+    }
+    td{
+        font-weight:500;
+    }
+    th {
+        background-color: #f2f2f2;
+        text-align:center;
+        color: darkblue;
+    }
+
+
+    /* Your existing CSS styles */
+
+    .row {
+        margin-left: -15px;
+        margin-right: -15px;
+    }
+
+    .col-md-6 {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .top-interest {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .top-interest > div {
+        width: calc(20% - 12px); /* Adjust width based on your preference */
+        background-color: green;
+        margin: 5px;
+        padding: 4px;
+        color: white;
+        text-align: center;
+        border-radius: 3px;
+        font-weight: 700;
+    }
+
+    .top-interest > div:hover {
+        background-color: white;
+        color: green;
+        border: 2px solid green;
+    }
+
+    .bot-interest {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .bot-interest > div {
+            width: calc(20% - 12px); /* Adjust width based on your preference */
+            background-color: red;
+            margin: 5px;
+            padding: 4px;
+            color: white;
+            text-align: center;
+            border-radius: 3px;
+            font-weight: 700;
+    }
+
+    .bot-interest > div:hover {
+        background-color: white;
+        color: red;
+        border: 2px solid red;
+    }
+
+    .dist-interest,
+    .dept-distribution,
+    .degree-distribution,
+    .provincial-distribution,
+    .gender-distribution {
+        background-color: #f4f4f4;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .box {
+        background-color: #f4f4f4;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .box h5 {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 10px;
+       color:darkblue;
+    }
+
+    .chart-container {
+        position: relative;
+        width: 100%;
+        margin-top: 20px;
+    }
+    .chart-container-bar {
+        position: relative;
+        width: 100%;
+        margin-top: 20px;
+        height: 280px; /* Adjust the height as needed */
+    }
+
+    #genderChart, 
+    #degreeChart,
+    #departmentChart,
+    #provincialChart
+   
+    {
+        width: 100%;
+        max-width: 200px; /* Adjust the maximum width of the chart */
+        margin: 0 auto;
+        display: block;
+    }
+    canvas {
+        width: 100% !important;
+        max-width: 200px; /* Adjust the maximum width of the chart */
+        margin: 0 auto;
+        display: block;
+    }
+    #ageDistributionChart{
+        max-width:700px;
+    }
+    /* Your existing CSS */
+
+    .degree-distribution h5,
+    .provincial-distribution h5 
+    {
+        font-size: 18px;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .chart-container-act canvas{
+        height:280px;
+        width:100%;
+    }
+
+
+</style>
+
+<script src="/_framework/aspnetcore-browser-refresh.js"></script>
+
+<h3>Dashboard</h3>
+<p>@ViewBag.AdminRole</p>
+<p>@ViewBag.StudentRole</p>
+<br />
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <h5 >Top 5 Interests</h5>
+                <div class="box-content top-interest">
+                    @if (ViewBag.TopInterests != null)
+                    {
+                        @foreach (var interest in ViewBag.TopInterests)
+                        {
+                            <div>@interest</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <h5>Bottom 5 Interests</h5>
+                <div class="box-content bot-interest">
+                    @if (ViewBag.BottomInterests != null)
+                    {
+                        @foreach (var interest in ViewBag.BottomInterests)
+                        {
+                            <div>@interest</div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box dist-interest">
+                <h5>Distinct Interests</h5>
+                <div class="box-content">
+                    <p style="text-align:center; font-size:40px; font-weight:700; color:darkcyan;">@ViewBag.CountDistinctInterests</p>
+                </div>
+            </div>
+        </div>
+   </div>
+    
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box gender-distribution">
+                <h5>Gender Distribution</h5>
+                <div class="chart-container">
+                    <canvas id="genderChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box dept-distribution">
+                <h5>Department Distribution</h5>
+                <div class="chart-container">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box degree-distribution">
+                <h5>Degree Distribution</h5>
+                <div class="chart-container">
+                    <canvas id="degreeChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box provincial-distribution">
+                <h5>Provincial Distribution</h5>
+                <div class="chart-container">
+                    <canvas id="provincialChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <table>
+                <tr>
+                    <th>Students Status</th>
+                    <th>Count</th>
+                </tr>
+                <tr>
+                    <td>Graduated</td>
+                    <td>@ViewBag.GraduatedCount</td>
+                </tr>
+                <tr>
+                    <td>About to graduate</td>
+                    <td>@ViewBag.GoingToGraduateCount</td>
+                </tr>
+                <tr>
+                    <td>Recently Enrolled</td>
+                    <td>@ViewBag.RecentlyEnrolledCount</td>
+                </tr>
+                <tr>
+                    <td>Studying</td>
+                    <td>@ViewBag.StudyingCount</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <h5>Age Distribution</h5>
+                <div class="chart-container-bar ">
+                    <canvas id="ageDistributionChart"></canvas>
+                </div>
+            </div>
+        </div>
+     </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <h5>Students Created Daily (Last 30 Days)</h5>
+                <div class="chart-container chart-container-act">
+                    <canvas id="studentsCreatedChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var studentsData = @Html.Raw(Json.Serialize(ViewBag.StudentsCreatedDailyLast30Days));
+
+        var ctx = document.getElementById('studentsCreatedChart').getContext('2d');
+        var studentsCreatedChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Array.from({ length: studentsData.length }, (_, i) => (i + 1).toString()),
+                datasets: [{
+                    label: 'Students Created Daily',
+                    data: studentsData,
+                    fill: false,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    pointBackgroundColor: 'rgba(75, 192, 192, 1)'
+                }]
+            },
+            options: {
+                maintainAspectRatio: false, // Comma instead of semicolon
+                aspectRatio: 2, // Comma instead of semicolon
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Days'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Number of Students Created'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        var dataPoints = @Html.Raw(ViewBag.DataPoints); // Deserialize JSON data from ViewBag
+
+        var maleCount = dataPoints.find(data => data.label === 'Male').y;
+        var femaleCount = dataPoints.find(data => data.label === 'Female').y;
+
+        var ctx = document.getElementById('genderChart').getContext('2d');
+        var genderChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Male', 'Female'],
+                datasets: [{
+                    data: [maleCount, femaleCount],
+                    backgroundColor: ['blue', 'pink']
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var departments = @Html.Raw(ViewBag.DepartmentDataPoints);
+
+        var deptLabels = [];
+        var deptCounts = [];
+
+        departments.forEach(function (dept) {
+            deptLabels.push(dept.label);
+        deptCounts.push(dept.y);
+        });
+
+        var ctxDept = document.getElementById('departmentChart').getContext('2d');
+        var departmentChart = new Chart(ctxDept, {
+            type: 'pie',
+        data: {
+            labels: deptLabels,
+        datasets: [{
+            data: deptCounts,
+        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8A2BE2'] // Add colors for each department
+                }]
+            },
+        options: {
+            responsive: true,
+        legend: {
+            position: 'right',
+                }
+            }
+        });
+        });
+
+    document.addEventListener('DOMContentLoaded', function () {
+
+        var degree = @Html.Raw(ViewBag.DegreeDataPoints);
+
+
+        var degreeLabels = [];
+        var degreeCounts = [];
+
+        degree.forEach(function (degree) {
+            degreeLabels.push(degree.label);
+            degreeCounts.push(degree.y);
+        });
+
+        var ctxDegree = document.getElementById('degreeChart').getContext('2d');
+        var degreeChart = new Chart(ctxDegree, {
+            type: 'pie',
+            data: {
+                labels: degreeLabels,
+                datasets: [{
+                    data: degreeCounts,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8A2BE2', '#FFA07A', '#20B2AA', '#9370DB']
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var cities = @Html.Raw(ViewBag.CityDataPoints);
+
+        var cityLabels = [];
+        var cityCounts = [];
+
+        cities.forEach(function (city) {
+            cityLabels.push(city.label);
+            cityCounts.push(city.y);
+        });
+
+        var ctxCity = document.getElementById('provincialChart').getContext('2d');
+        var cityChart = new Chart(ctxCity, {
+            type: 'pie',
+            data: {
+                labels: cityLabels,
+                datasets: [{
+                    data: cityCounts,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#8A2BE2', '#FFA07A'] // Add colors for each city
+                }]
+            },
+            options: {
+                responsive: true,
+                legend: {
+                    position: 'right',
+                }
+            }
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var ages = @Html.Raw(Json.Serialize(ViewBag.Ages)); // Pass ages from C# to JavaScript
+
+        var ctx = document.getElementById('ageDistributionChart').getContext('2d');
+        var ageChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: Array.from({ length: ages.length }, (_, i) => (i + 1).toString()), // Assuming labels as 1, 2, 3... for each student
+                datasets: [{
+                    label: 'Age Distribution',
+                    data: ages,
+                    backgroundColor: 'rgba(54, 162, 235, 0.5)', // Adjust chart color as needed
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                maintainAspectRatio: false, // Disable the aspect ratio
+                aspectRatio: 2, // Adjust the aspect ratio for height
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Age', // Label for X-axis
+                            font: {
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Count', // Label for Y-axis
+                            font: {
+                                weight: 'bold'
+                            }
+                        },
+                        beginAtZero: true
+                    }
+                },
+               
+            }
+        });
+    });
+
+</script>
+
+  

@@ -1,0 +1,99 @@
+﻿@model EAD_Project_II.Models.SignUpViewModel
+
+@{
+    ViewBag.Title = "SignUp";    
+    Layout = "~/Views/Shared/layout_1.cshtml";   
+}
+
+@* <div style="background-color: #162e56; color: white; padding: 20px;">
+    <h3 class="text-center">Student Interest System</h3>
+</div>
+<br /> *@
+
+<br />
+<br />
+<br />
+
+<div class="card mx-auto" style="max-width: 400px; background-color: #bfcfff;">
+    <div class="card-body">
+        <h2 style="text-align:center;">Sign Up</h2>
+        <br />
+        @using (Html.BeginForm("SignUp", "SignUp", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+               @*  @Html.LabelFor(model => model.Name) *@
+                @Html.TextBoxFor(model => model.Name, new { @class = "form-control smaller-input" , placeholder = "Enter your name"})
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+            <br />
+
+            <div class="form-group">
+                @* @Html.LabelFor(model => model.Email) *@
+                @Html.TextBoxFor(model => model.Email, new { @class = "form-control smaller-input" , placeholder = "Email" })
+                @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+            </div>
+            <br />
+            <div class="form-group">
+               @*  @Html.LabelFor(model => model.Password) *@
+                @Html.PasswordFor(model => model.Password, new { @class = "form-control smaller-input" , placeholder = "Type password"})
+                @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
+            </div>
+            <br />
+            <div class="form-group">
+               @*  @Html.LabelFor(model => model.ConfirmPassword) *@
+                @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control smaller-input" , placeholder = "Confirm password"})
+                @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+            </div>
+            <br />
+            <br />
+            <button type="submit" class="btn btn-primary btn-block custom-button-width">Sign Up</button>
+            <br />
+
+            
+            <p style="text-align:center;">Already have an account? <a href="@Url.Action("Login", "Login")">Login</a></p>
+            <p style="text-align:center; color:black;">
+                <a href="@Url.Action("StartView", "Admin")" style="text-decoration: none; color: black;">Goto Start</a>
+            </p>
+        }
+    </div>
+</div>
+
+<style>
+    .smaller-input {
+        width: 100%; /* Adjust width as needed */
+        max-width: 350px; /* Set a maximum width if required */
+        /* Add margin to separate elements */
+        margin-left: 7px;
+        background-color:#bfcfff;
+        border:1px solid black;
+    }
+
+    .custom-button-width {
+        width: 100%; /* Adjust the width as needed */
+        max-width: 350px; /* Set a maximum width if required */
+        background-color: #000924;
+        border:2px solid white;
+        margin-left: 7px;
+        border-radius:20px;
+        padding: 7px;
+        
+    }
+
+    .card {
+        border-radius: 10px; /* Adjust the radius as needed */
+    }
+
+    .form-group {
+        text-align: center;
+    }
+
+    .d-inline-block {
+        display: inline-block;
+        vertical-align: top;
+    }
+    body{
+        background-color: #000924;
+    }
+</style>

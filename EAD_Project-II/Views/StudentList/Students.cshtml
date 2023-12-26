@@ -1,0 +1,301 @@
+﻿@{
+    Layout = "~/Views/Shared/studentList_layout.cshtml";
+    ViewBag.Title = "Students";
+}
+@model List<EAD_Project_II.StudentViewModel>
+
+<style>
+    .action-buttons td a{
+        margin-right: 5px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        padding: 8px;
+        text-align: left;
+    }
+
+    th {
+        /* background-color: #f2f2f2; */
+        background-color: #00008B;
+        color: #e5e5e5;
+    }
+    td{
+        font-size:13px;
+    }
+    tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tbody tr:hover {
+        background-color: #e5e5e5;
+    }
+
+    .center {
+        margin: auto;
+    }
+
+    .sortable {
+        cursor: pointer;
+    }
+
+        .sortable span {
+            display: inline-block;
+            width: 10px;
+            margin-left:4px;
+        }
+
+    /* New styles for positioning */
+    .pagination-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .pagination-container {
+        display: flex;
+    }
+
+    .pagination {
+        display: flex;
+    }
+
+        .pagination button {
+            /* Your button styles here */
+        }
+
+</style>
+
+
+
+<script>
+
+   
+    function confirmDelete(fullName, studentId) {
+        if (confirm(`Are you sure you want to delete ${fullName}?`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = `/StudentList/DeleteStudent?id=${studentId}`;
+
+            const hiddenField = document.createElement('input');
+            hiddenField.type = 'hidden';
+            hiddenField.name = 'id';
+            hiddenField.value = studentId;
+
+            form.appendChild(hiddenField);
+            document.body.appendChild(form);
+
+            form.submit();
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', function () {
+        // Set default value to 'All'
+        document.getElementById('allOption').selected = true;
+    });
+
+
+    let ascending = true;
+
+    function sortTable(columnIndex) {
+        let table, rows, switching, i, x, y, shouldSwitch;
+        table = document.querySelector('table');
+        switching = true;
+
+        while (switching) {
+            switching = false;
+            rows = table.rows;
+
+            for (i = 1; i < (rows.length - 1); i++) {
+                shouldSwitch = false;
+
+                x = rows[i].getElementsByTagName('TD')[columnIndex];
+                y = rows[i + 1].getElementsByTagName('TD')[columnIndex];
+
+                if (ascending) {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                } else {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+            }
+
+            if (shouldSwitch) {
+                rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                switching = true;
+            }
+        }
+
+        // Toggle the arrow direction
+        let arrow = document.querySelectorAll('.sortable span');
+        arrow.forEach(span => {
+            span.innerHTML = '&#8597;'; // Reset all arrows
+        });
+
+        let currentArrow = document.querySelector(`#sort-${columnIndex}`);
+        if (ascending) {
+            currentArrow.innerHTML = '&#8593;'; // Up arrow
+        } else {
+            currentArrow.innerHTML = '&#8595;'; // Down arrow
+        }
+        ascending = !ascending;
+    }
+
+    // JavaScript functions for pagination
+    let currentPage = 0;
+    let rowsPerPage = 5; // Default rows per page
+
+    function changeRowsPerPage(value) {
+        if (value === 'all') {
+            rowsPerPage = document.getElementsByTagName('tbody')[0].rows.length;
+            currentPage = 0;
+            showPage(currentPage);
+        } else {
+            rowsPerPage = parseInt(value);
+            currentPage = 0;
+            showPage(currentPage);
+        }
+    }
+
+    function prevPage() {
+        if (currentPage > 0) {
+            currentPage--;
+            showPage(currentPage);
+        }
+    }
+
+    function nextPage() {
+        let table = document.querySelector('table');
+        if (currentPage < Math.ceil(table.rows.length / rowsPerPage) - 1) {
+            currentPage++;
+            showPage(currentPage);
+        }
+    }
+
+    function goToStartPage() {
+        currentPage = 0; // Go to the first page
+        showPage(currentPage);
+        updatePageDisplay();
+    }
+
+    function goToEndPage() {
+        let table = document.querySelector('table');
+        let totalRows = table.rows.length - 1; // -1 to exclude the header row
+        currentPage = Math.ceil(totalRows / rowsPerPage) - 1; // Go to the last page
+        showPage(currentPage);
+        updatePageDisplay();
+    }
+
+    function showPage(page) {
+        let rows = document.getElementsByTagName('tbody')[0].rows;
+        let start = rowsPerPage * page;
+        let end = start + rowsPerPage;
+
+        for (let i = 0; i < rows.length; i++) {
+            if (i >= start && i < end) {
+                rows[i].style.display = '';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+
+        // Update page count display
+        let totalPages = Math.ceil(rows.length / rowsPerPage);
+        document.getElementById('pageDisplay').textContent = `Page ${page + 1} of ${totalPages}`;
+    }
+
+
+</script>
+
+
+<div class="center">
+    <h2>Students</h2>
+    <br />
+
+    <div class="pagination-box">
+        <div id="rowsPerPage">
+            <label for="rows">Rows per page:</label>
+            <select id="rows" name="rows" onchange="changeRowsPerPage(this.value)">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="all" id="allOption">All</option>
+            </select>
+        </div>
+        <div class="pagination-container">
+            <div class="pagination">
+                <svg id="goToStartPageIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512" onclick="goToStartPage()" style="fill: black; vertical-align: middle; cursor: pointer;">
+                    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                        <path d="M2239 4261 c-20 -4 -53 -16 -75 -27 -53 -26 -1639 -1275 -1687 -1327 -174 -193 -164 -532 20 -711 32 -30 416 -337 853 -681 858 -675 836 -660 958 -658 141 2 285 131 343 308 9 29 14 163 18 501 l6 460 785 -618 c610 -480 796 -622 835 -635 74 -25 163 -21 229 11 108 53 211 195 236 325 14 74 14 2628 0 2702 -25 130 -128 272 -236 325 -66 32 -155 36 -229 11 -38 -13 -232 -160 -835 -636 l-785 -618 -6 461 c-4 338 -9 472 -18 501 -39 118 -134 236 -225 279 -57 27 -132 38 -187 27z" />
+                    </g>
+                </svg>               
+                <svg id="prevPageIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" onclick="prevPage()" style="fill: currentColor; vertical-align: middle; cursor: pointer;">
+                    <!-- Add your SVG content here -->
+                    <!-- For example: -->
+                    <path d="M20 12H4m8-8l-8 8 8 8" />
+                </svg>                
+                
+                <span id="pageDisplay">First Page</span>
+
+                <svg id="nextPageIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" onclick="nextPage()" style="fill: currentColor; vertical-align: middle; cursor: pointer;">
+                    
+                    <path d="M20 12H4m8-8l8 8-8 8" />
+                </svg>
+                <svg id="goToEndPageIcon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512.000000 512.000000" onclick="goToEndPage()" style="fill: black; vertical-align: middle; cursor: pointer;">
+                    <g transform="translate(0.000000,512.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">
+                        <path d="M650 4257 c-26 -7 -62 -23 -81 -35 -53 -32 -133 -122 -164 -182 -56 -110 -55 -75 -55 -1480 0 -1406 -1 -1369 55 -1481 38 -73 126 -163 194 -196 77 -38 172 -38 251 1 31 15 387 288 825 634 l770 608 6 -461 c4 -337 9 -471 18 -500 39 -120 133 -235 230 -282 81 -40 177 -39 255 2 88 47 1664 1294 1708 1353 142 185 142 459 0 644 -44 58 -1619 1306 -1707 1352 -78 41 -176 42 -256 3 -97 -47 -191 -162 -230 -282 -9 -29 -14 -163 -18 -501 l-6 -460 -525 413 c-289 228 -637 503 -775 611 -137 108 -270 207 -295 219 -57 28 -142 36 -200 20z" />
+                    </g>
+                </svg>
+            </div>
+
+            
+        </div>
+    </div>
+
+    <!-- Table to display student data -->
+    <table border="1">
+        <thead>
+            <tr>
+                <th onclick="sortTable(0)" class="sortable">ID <span id="sort-0">&#8597;</span></th>
+                <th onclick="sortTable(1)" class="sortable">Name <span id="sort-1">&#8597;</span></th>
+                <th onclick="sortTable(2)" class="sortable">Roll Number <span id="sort-2">&#8597;</span></th>
+                <th onclick="sortTable(3)" class="sortable">Department <span id="sort-3">&#8597;</span></th>
+                <th onclick="sortTable(4)" class="sortable">Degree <span id="sort-4">&#8597;</span></th>
+                <th onclick="sortTable(5)" class="sortable">DOB <span id="sort-5">&#8597;</span></th>
+                <th onclick="sortTable(6)" class="sortable">City <span id="sort-6">&#8597;</span></th>
+                <th onclick="sortTable(7)" class="sortable">Interest <span id="sort-7">&#8597;</span></th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model)
+            {
+                <tr>
+                    <td>@student.Id</td>
+                    <td>@student.FullName</td>
+                    <td>@student.RollNumber</td>
+                    <td>@student.Dept</td>
+                    <td>@student.Degree</td>
+                    <td>@(student.Dob?.ToShortDateString())</td>
+                    <td>@student.City</td>
+                    <td>@student.Interest</td>
+                    <td class="action-buttons">
+                        <a asp-controller="StudentList" asp-action="EditStudent" asp-route-id="@student.Id" style="text-decoration:none">Edit | </a>
+                        <a asp-controller="StudentList" asp-action="StudentView" asp-route-id="@student.Id" style="text-decoration:none">Details | </a>
+                        <a href="#" onclick="confirmDelete('@student.FullName', '@student.Id')" style="text-decoration:none">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

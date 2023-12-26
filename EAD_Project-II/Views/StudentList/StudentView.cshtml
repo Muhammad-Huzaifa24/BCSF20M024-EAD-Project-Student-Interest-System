@@ -1,0 +1,76 @@
+﻿@model EAD_Project_II.StudentViewModel
+@{
+    Layout = "~/Views/Shared/studentView_layout.cshtml";
+    ViewBag.Title = "Details";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Details</title>
+    <style>
+        body{
+            background-color: #9999FF;
+        }
+        /* Add CSS for card layout */
+        .card {
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            padding: 20px;
+            margin: 60px auto;
+            max-width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            
+            background-color: #000033;
+        }
+
+            .card p {
+                margin: 5px 0;
+               color: #bfcfff;
+            }
+
+            .card h2 {
+                margin-bottom: 15px;
+                color: #bfcfff;
+            }
+
+        .back-button {
+            background-color: #000924;
+            color: #bfcfff;
+            padding: 10px 20px;
+            margin-left:5%;
+            text-decoration: none;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .back-button:hover {
+                background-color: transparent;
+                color: #000924;
+                border: 1px solid #000924;
+            }
+        /* Add more styles as needed */
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Student Details</h2>
+        <p>_________________________________________</p>
+
+        <p><strong>ID:</strong> @Model.Id</p>
+        <p><strong>Name:</strong> @Model.FullName</p>
+        <p><strong>Roll Number:</strong> @Model.RollNumber</p>
+        <p><strong>Department:</strong> @Model.Dept</p>
+        <p><strong>Degree:</strong> @Model.Degree</p>
+        <p><strong>Date of Birth:</strong> @Model.Dob?.ToShortDateString()</p>
+        <p><strong>City:</strong> @Model.City</p>
+        <p><strong>Interest:</strong> @Model.Interest</p>
+        <!-- Display other student details as needed -->
+    </div>
+
+    <a asp-action="Students" asp-controller="StudentList" class="back-button">Back to Student List</a>
+    <!-- Add more buttons or links as needed -->
+
+</body>
+</html>
